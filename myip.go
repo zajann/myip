@@ -19,10 +19,12 @@ func GetIPv4(name string) string {
 	for _, addr := range addrs {
 		switch v := addr.(type) {
 		case *net.IPNet:
-			ipv4 = v.IP
+			if v.IP.To4() != nil {
+				ipv4 = v.IP
+			}
 		}
 	}
-	if ipv4.To4() == nil {
+	if ipv4.String() == "<nil>" {
 		return ""
 	}
 	return ipv4.String()
@@ -42,11 +44,13 @@ func GetIPv6(name string) string {
 	}
 	for _, addr := range addrs {
 		switch v := addr.(type) {
-		case *net.IPAddr:
-			ipv6 = v.IP
+		case *net.IPNet:
+			if v.IP.To4() == nil {
+				ipv6 = v.IP
+			}
 		}
 	}
-	if ipv6.To4() != nil {
+	if ipv6.String() == "<nil>" {
 		return ""
 	}
 	return ipv6.String()
